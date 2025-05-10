@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  postgres-example:
+    image: postgres:latest
+    ports:
+      - "5432"
+    environment:
+      - POSTGRES_USER=farhan
+      - POSTGRES_PASSWORD=farhan
+      - POSTGRES_DB=admin
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - app-network
+
+  backend:
+    build: 
+      context: "./backend"
+      dockerfile: Dockerfile
+    image: "app-golang:1.0.0"
+    ports:
+      - "8080"
+    networks:
+      - app-network
+    depends_on:
+      - postgres-example
+    restart: always
+    env_file:
+      - ./backend/.env
+
+  frontend:
+    build:
+      context: "./frontend"
+      dockerfile: Dockerfile
+    image: react_frontend
+    ports: 
+      - "3000"
+    restart: always
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:latest
+    ports: 
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge
