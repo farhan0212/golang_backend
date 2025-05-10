@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+version: "3.9"
+
+=======
+<<<<<<< HEAD
+>>>>>>> 3007410 (perubahan)
+services:
+  postgres-example:
+    image: postgres:latest
+    ports:
+<<<<<<< HEAD
+      - "5432"
+=======
+      - "5432:5432"
+=======
 version: "3.9"
 
 services:
@@ -5,6 +20,8 @@ services:
     image: postgres:latest
     ports:
       - "5432"
+>>>>>>> e0acab8 (first commit)
+>>>>>>> 3007410 (perubahan)
     environment:
       - POSTGRES_USER=farhan
       - POSTGRES_PASSWORD=farhan
@@ -13,6 +30,73 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
     restart: always
     networks:
+<<<<<<< HEAD
+      - app-network
+=======
+<<<<<<< HEAD
+        - postgres-net
+    
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - "5050:8080"
+    depends_on:
+      - postgres-example
+    restart: always
+    networks:
+      - postgres-net
+>>>>>>> 3007410 (perubahan)
+
+  backend:
+    build: 
+      context: "./backend"
+      dockerfile: Dockerfile
+    image: "app-golang:1.0.0"
+    ports:
+      - "8080"
+    networks:
+      - app-network
+    depends_on:
+      - postgres-example
+    restart: always
+    env_file:
+      - ./backend/.env
+
+  frontend:
+    build:
+      context: "./frontend"
+      dockerfile: Dockerfile
+    image: react_frontend
+    ports: 
+      - "3000"
+    restart: always
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:latest
+    ports: 
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+    restart: always
+
+networks:
+<<<<<<< HEAD
+  app-network:
+    driver: bridge
+=======
+  postgres-net:
+    driver: bridge
+=======
       - app-network
 
   backend:
@@ -59,3 +143,5 @@ services:
 networks:
   app-network:
     driver: bridge
+>>>>>>> e0acab8 (first commit)
+>>>>>>> 3007410 (perubahan)
